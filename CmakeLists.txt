@@ -1,0 +1,12 @@
+# CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.4)
+project(placeholdername_gui)
+set(SFML_STATIC_LIBRARIES TRUE)
+
+link_directories(${CMAKE_SOURCE_DIR}/deps/sfml/lib)
+include_directories(${CMAKE_SOURCE_DIR}/deps/sfml/include)
+
+add_executable(server server.cpp)
+
+target_link_libraries(server sfml-graphics-s sfml-window-s sfml-network-s sfml-system-s  opengl32 freetype winmm gdi32 -static)
