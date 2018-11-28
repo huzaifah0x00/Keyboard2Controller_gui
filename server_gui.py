@@ -1,4 +1,4 @@
-import tkinter
+import tkinter as tk
 import vjoy
 import pickle
 import socket
@@ -6,20 +6,54 @@ import socket
 from threading import Thread
 
 
+# TODO add server info into GUI
+
+
 class MainApplication:
     def __init__(self, master):
-        self.frame = tkinter.Frame(master, height=50, width=50,)
-        self.frame.pack( fill="both")
+
+        frame = tk.Frame(master, height=10, width=10, )
+        frame.grid(row=0,columnspan=2)
+
+        lower_frame = tk.Frame(master, height=10, width=10, )
+        lower_frame.grid(row=1, column=0)
+
 
         self.server_thread = Thread(target=self.StartServer)
-        print("up " + str(self.server_thread))
-        self.start_server_btn = tkinter.Button(self.frame, text="Start Server", command=self.server_thread.start,
-                                               height=5, width=10)
-        self.start_server_btn.pack(side="left")
 
-        self.stop_server_btn = tkinter.Button(self.frame, text="Stop Server", command=self.StopServer, height=5,
-                                              width=10)
-        self.stop_server_btn.pack(side="right")
+        self.start_server_btn = tk.Button(frame, text="Start Server", command=self.server_thread.start,
+                                          height=5, width=10)
+        self.start_server_btn.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
+
+        self.stop_server_btn = tk.Button(frame, text="Stop Server", command=self.StopServer, height=5,
+                                         width=10)
+        self.stop_server_btn.grid(row=0,column=1)
+
+        self.server_status = "not_running"
+
+        self.server_status_TB = tk.Label(lower_frame, text="server status:"+self.server_status)
+        self.server_status_TB.grid(row=2,column=0,)
+
+
+        self.host = socket.gethostname()
+        self.port = 4444
+        self.server_info = """
+        hostname : {}
+        port: {}
+        """.format(self.host, self.host)
+        self.server_info = 
+        self.update_widgets()
+
+        self.clients = []
+
+    def update_widgets(self):
+        self.start_server_btn.configure(command=self.server_thread.start)
+
+        # self.server_status_TB.delete(1.0, tk.END)
+        # self.server_status_TB.insert(tk.END, self.server_status)
+        self.server_status_TB.configure(text="server status: "+self.server_status)
+        self.server_info.configure(text = self.server_info)
+
 
     class Client(Thread):
         def __init__(self, conn, joystick_id):
@@ -49,17 +83,27 @@ class MainApplication:
 
     def StartServer(self):
         self.server_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        host = socket.gethostname()
-        port = 4444
+        self.host = socket.gethostname()
+        self.port = 4444
+        self.server_info = """
+        hostname : {}
+        port: {}
+        """.format(self.host, self.host)
+
+        self.server_status = "Running."
+        self.update_widgets()
+        self.server_s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
-            self.server_s.bind((host, port))
+            self.server_s.bind((self.host, self.port))
         except socket.error as e:
             print(str(e))
-        print("Server IP: {}\n Port: {}".format(host, port))
-        self.server_s.listen(5)
+        print("Server hostname: {}\n Port: {}".format(self.host, self.port))
+        try:
+            self.server_s.listen(5)
+        except:
+            pass
         print('Waiting for a connection.')
         joystick_id = 0
-        self.clients = []
         while True:
             joystick_id += 1
             try:
@@ -84,12 +128,14 @@ class MainApplication:
         except RuntimeError:
             print("Server Not Running")
 
+        self.server_status = "Not Running."
         self.server_thread = Thread(target=self.StartServer)
-        self.start_server_btn.configure(command=self.server_thread.start)
-        print("Resetting the server thread")
+        self.update_widgets()
+
+        print("Resetting the server server")
 
 
 if __name__ == '__main__':
-    root = tkinter.Tk()
+    root = tk.Tk()
     main = MainApplication(root)
     root.mainloop()

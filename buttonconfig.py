@@ -1,0 +1,23 @@
+buttonconfig = {
+
+	"UP" : "Y_UP" ,
+	"DOWN" : "Y_DOWN" ,
+	"LEFT" : "Y_LEFT" ,
+	"RIGHT" : "Y_RIGHT" ,
+	"S" : "X" ,
+	"A" : "Y" ,
+	"X" : "A" ,
+	"Z" : "B" ,
+	"LSHIFT"  : "RT" ,
+	"RSHIFT" : "LT" ,
+	"RCONTROL" : "RB" ,
+	"LCONTROL" : "LB" ,
+	"HOME" : "START" ,
+	"INSERT" : "SELECT" ,
+	"Q" : "LS",
+	"E" : "RS",
+	"I" : "DPAD_UP",
+	"K" : "DPAD_DOWN",
+	"J" : "DPAD_LEFT" ,
+	"L" : "DPAD_RIGHT" ,
+}
