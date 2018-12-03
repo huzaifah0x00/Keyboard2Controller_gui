@@ -37,6 +37,11 @@ class MainApplication:
         self.server_status_TB = ttk.Label(lower_frame, text="server status:"+self.server_status)
         self.server_status_TB.grid(row=2,column=0,)
 
+        self.connd_clients = []
+
+        self.connd_clients = ttk.Label(lower_frame, text="Connected clients:\n\t :"+self.conn_clients)
+        self.connd_clients.grid(row=2,column=0,)
+
 
         self.host = socket.gethostname()
         self.port = 4444
@@ -52,7 +57,7 @@ class MainApplication:
 
     def update_widgets(self):
         self.start_server_btn.configure(command=self.server_thread.start)
-
+        self.clients = 
         # self.server_status_TB.delete(1.0, ttk.END)
         # self.server_status_TB.insert(ttk.END, self.server_status)
         self.server_status_TB.configure(text="server status: "+self.server_status)
@@ -60,10 +65,12 @@ class MainApplication:
 
 
     class Client(Thread):
-        def __init__(self, conn, joystick_id):
+        def __init__(self, conn,addr, joystick_id):
             super().__init__()
             self.vj = vjoy.vJoy(joystick_id)
             self.conn = conn
+            self.id = joystick_id
+            self.addr = addr
 
         def close(self):
             self.conn.close()
@@ -115,9 +122,10 @@ class MainApplication:
             except OSError:
                 print("Ending the listener?")
                 return 1
+
             print('connected to: ' + addr[0] + ':' + str(addr[1]))
             print('Waiting for Keystrokes From: ' + str(addr[0]))
-            c = self.Client(conn, joystick_id)
+            c = self.Client(conn,addr, joystick_id)
             self.clients.append(c)
             c.start()
             # start_new_thread(threaded_client, (conn, joystick_id), )
